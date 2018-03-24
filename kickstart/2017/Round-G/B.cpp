@@ -78,27 +78,48 @@ int main() {
 }
 
 解法2， 构造图，求最小生成树
+数据比较大，注意用 long long.
+prim 算法模板
 
-#include <iostream>
-#include <time.h>
-#include <string>
-#include <vector>
-#include <map>
-#include <set>
-#include <queue>
-#include <unordered_set>
+#include <bits/stdc++.h>
 
 #define ll long long
+#define ld long double
 
 using namespace std;
 
 int N;
-vector<int> r, b, vis;
-vector<vector<int>> graph;
+vector<ll> r, b, vis;
+vector<vector<ll>> graph;
 
-int solve() {
-    
-    return 0;
+ll prim() {
+    vector<ll> dis(N + 1, LLONG_MAX), vis(N + 1, 0);
+    ll ret = 0;
+
+    // 初始时假设1节点也没访问
+    dis[1] = 0;
+
+    // 外层循环，合并N次
+    for (int i = 1; i <= N; i++) {
+
+        int v = -1;
+        for (int j = 1; j <= N; j++) {
+            if (vis[j]) continue;
+            if (v == -1 || dis[j] < dis[v]) v = j;
+        }
+
+        //没合并 n 条边就已经要结束了，说明图不联通
+        if (v == -1) return -1;
+
+        vis[v] = 1;
+        ret += dis[v];
+
+        // 合并v节点的过程
+        for (int j = 1; j <= N; j++) {
+            dis[j] = min(dis[j], graph[v][j]);
+        }
+    }
+    return ret;
 }
 
 int main() {
@@ -115,7 +136,7 @@ int main() {
         b.assign(N + 1, 0);
         vis.assign(N + 1, 0);
 
-        graph.assign(N + 1, vector<int>(N + 1));
+        graph.assign(N + 1, vector<ll>(N + 1));
 
         for (int j = 1; j <= N; j++) cin >> r[j];
 
@@ -128,7 +149,7 @@ int main() {
             }
         }
 
-        cout << "Case #" << i << ": " << solve() << endl;
+        cout << "Case #" << i << ": " << prim() << endl;
 
         cerr << "Case #" << i << " time taken:" << (double)(clock() - tStart)/CLOCKS_PER_SEC << endl;
     }
